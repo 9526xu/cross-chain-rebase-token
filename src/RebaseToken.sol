@@ -89,6 +89,10 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
         return super.transferFrom(_from, _to, _amount);
     }
 
+    function getGlobalInterestRate() public view returns (uint256) {
+        return s_globalInterestRate;
+    }
+
     /**
      * @notice Hook that is called before any token transfer. This includes calls to {transfer} and
      * {transferFrom}.
