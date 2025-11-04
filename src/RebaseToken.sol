@@ -19,10 +19,13 @@ contract RebaseToken is ERC20 {
      * @return Balance of user with accumulated interest
      */
     function balanceOf(address account) public view override returns (uint256) {
+        uint256 principalBalance = super.balanceOf(account);
+        if (principalBalance == 0) {
+            return 0;
+        }
         // calculate user accumulated interest rate since last update equation:
         // balance * (1 + (interestRate * timeElapsed))
-        return
-            super.balanceOf(account) * _calculateUserAccumulatedInterestRateSinceLastUpdate(account) / PRECISION_FACTOR;
+        return principalBalance * _calculateUserAccumulatedInterestRateSinceLastUpdate(account) / PRECISION_FACTOR;
     }
 
     /**
@@ -50,6 +53,41 @@ contract RebaseToken is ERC20 {
 
         _mintUserInterestAndUpdateTimestamp(_account);
         _burn(_account, _amount);
+    }
+
+    function transfer(address _to, uint256 _amount) public override returns (bool) {
+        address from = _msgSender();
+        // if amount is max, transfer all balance
+        if (_amount == type(uint256).max) {
+            _amount = balanceOf(from);
+        }
+        _beforeTokenTransfer(from, _to, _amount);
+        return super.transfer(_to, _amount);
+    }
+
+    function transferFrom(address _from, address _to, uint256 _amount) public override returns (bool) {
+        // if amount is max, transfer all balance
+        if (_amount == type(uint256).max) {
+            _amount = balanceOf(_from);
+        }
+        _beforeTokenTransfer(_from, _to, _amount);
+        return super.transferFrom(_from, _to, _amount);
+    }
+
+    /**
+     * @notice Hook that is called before any token transfer. This includes calls to {transfer} and
+     * {transferFrom}.
+     *
+     * @param _from The address from which the token is transferred.
+     * @param _to The address to which the token is transferred.
+     * @param _amount The amount of the token to be transferred.
+     */
+    function _beforeTokenTransfer(address _from, address _to, uint256 _amount) internal {
+        _mintUserInterestAndUpdateTimestamp(_from);
+        _mintUserInterestAndUpdateTimestamp(_to);
+        if (s_userInterestRate[_to] == 0) {
+            s_userInterestRate[_to] = s_userInterestRate[_from];
+        }
     }
 
     /**
