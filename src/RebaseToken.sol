@@ -4,9 +4,8 @@ pragma solidity ^0.8.20;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
-import {IRebaseToken} from "./IRebaseToken.sol";
 
-contract RebaseToken is ERC20, Ownable, AccessControl, IRebaseToken {
+contract RebaseToken is ERC20, Ownable, AccessControl {
     bytes32 public constant MINTER_BURNER_ROLE = keccak256("MINTER_BURNER_ROLE");
 
     mapping(address => uint256) private s_userInterestRate; // record user interest rate

@@ -1,8 +1,7 @@
 pragma solidity ^0.8.20;
 
 import {TokenPool} from "@chainlink/contracts-ccip/contracts/pools/TokenPool.sol";
-import {IERC20} from
-    "@chainlink/contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
+import {IERC20} from "@openzeppelin/contracts@4.8.3/token/ERC20/IERC20.sol";
 import {Pool} from "@chainlink/contracts-ccip/contracts/libraries/Pool.sol";
 import {IRebaseToken} from "./interface/IRebaseToken.sol";
 

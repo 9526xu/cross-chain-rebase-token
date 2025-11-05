@@ -13,3 +13,4 @@ out/
 .env
 node_modules/
 cache/
+bin/
