@@ -1,2 +1,3 @@
 @chainlink/contracts/=lib/chainlink-evm/contracts/
 @chainlink/contracts-ccip/contracts/=lib/chainlink-ccip/chains/evm/contracts/
+@chainlink/local/=lib/chainlink-local/ 
