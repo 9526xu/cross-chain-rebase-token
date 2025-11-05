@@ -6,8 +6,8 @@ interface IRebaseToken {
     function principalBalanceOf(address account) external view returns (uint256);
     function getGlobalInterestRate() external view returns (uint256);
 
-
-
     function mint(address _account, uint256 _amount, uint256 _interestRate) external;
     function burn(address _account, uint256 _amount) external;
+
+    function getUserInterestRate(address account) external view returns (uint256);
 }

@@ -4,8 +4,9 @@ pragma solidity ^0.8.20;
 import {ERC20} from "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import {Ownable} from "@openzeppelin/contracts/access/Ownable.sol";
 import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
+import {IRebaseToken} from "./IRebaseToken.sol";
 
-contract RebaseToken is ERC20, Ownable, AccessControl {
+contract RebaseToken is ERC20, Ownable, AccessControl, IRebaseToken {
     bytes32 public constant MINTER_BURNER_ROLE = keccak256("MINTER_BURNER_ROLE");
 
     mapping(address => uint256) private s_userInterestRate; // record user interest rate
@@ -15,14 +16,9 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
     uint256 private s_globalInterestRate = 5e10; // record global interest rate
 
-    constructor() ERC20("RebaseToken", "RT") Ownable(msg.sender) {
-    }
+    constructor() ERC20("RebaseToken", "RT") Ownable(msg.sender) {}
 
-
-
-
-    event InterestSet( uint256 interestRate);
-
+    event InterestSet(uint256 interestRate);
 
     function grantMinterBurnerRole(address _account) public onlyOwner {
         grantRole(MINTER_BURNER_ROLE, _account);
@@ -91,6 +87,15 @@ contract RebaseToken is ERC20, Ownable, AccessControl {
 
     function getGlobalInterestRate() public view returns (uint256) {
         return s_globalInterestRate;
+    }
+
+    /**
+     * @notice Get user interest rate
+     * @param account User address
+     * @return User interest rate
+     */
+    function getUserInterestRate(address account) public view returns (uint256) {
+        return s_userInterestRate[account];
     }
 
     /**

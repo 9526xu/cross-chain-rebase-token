@@ -1,4 +1,16 @@
 {
+  "lib/chainlink-ccip": {
+    "tag": {
+      "name": "contracts-ccip-v1.6.0",
+      "rev": "e9476e9948c5f84fd4e980484a520085bcc1b9d5"
+    }
+  },
+  "lib/chainlink-evm": {
+    "tag": {
+      "name": "contracts-v1.4.0",
+      "rev": "e06cc226086ad91cfede63e96c63e5b3440c9801"
+    }
+  },
   "lib/forge-std": {
     "tag": {
       "name": "v1.11.0",
