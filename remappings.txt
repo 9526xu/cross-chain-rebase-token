@@ -3,3 +3,4 @@
 @chainlink/local/=lib/chainlink-local/ 
 @openzeppelin/contracts/=lib/openzeppelin-contracts/contracts/
 openzeppelin-contracts/=lib/openzeppelin-contracts/contracts/
+@openzeppelin/contracts@4.8.3/=lib/chainlink-local/src/vendor/openzeppelin-solidity/v4.8.3/contracts/

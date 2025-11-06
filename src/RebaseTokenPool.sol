@@ -1,25 +1,35 @@
+// SPDX-License-Identifier: UNLICENSED
 pragma solidity ^0.8.20;
 
 import {TokenPool} from "@chainlink/contracts-ccip/contracts/pools/TokenPool.sol";
-import {IERC20} from "@openzeppelin/contracts@4.8.3/token/ERC20/IERC20.sol";
+import {IERC20} from "@chainlink/contracts/src/v0.8/vendor/openzeppelin-solidity/v4.8.3/contracts/token/ERC20/IERC20.sol";
 import {Pool} from "@chainlink/contracts-ccip/contracts/libraries/Pool.sol";
 import {IRebaseToken} from "./interface/IRebaseToken.sol";
+import {console} from "forge-std/console.sol";
 
 contract RebaseTokenPool is TokenPool {
-    constructor(IERC20 token, uint8 localTokenDecimals, address[] memory allowlist, address rmnProxy, address router)
-        TokenPool(token, 18, allowlist, rmnProxy, router)
-    {}
+    constructor(
+        IERC20 token,
+        uint8 localTokenDecimals,
+        address[] memory allowlist,
+        address rmnProxy,
+        address router
+    ) TokenPool(token, 18, allowlist, rmnProxy, router) {}
 
     /// @notice burns the tokens on the source chain
-    function lockOrBurn(Pool.LockOrBurnInV1 calldata lockOrBurnIn)
+    function lockOrBurn(
+        Pool.LockOrBurnInV1 calldata lockOrBurnIn
+    )
         external
         virtual
         override
         returns (Pool.LockOrBurnOutV1 memory lockOrBurnOut)
     {
+        console.log("lockOrBurnIn.amount", lockOrBurnIn.amount);
         _validateLockOrBurn(lockOrBurnIn);
         // // Burn the tokens on the source chain. This returns their userAccumulatedInterest before the tokens were burned (in case all tokens were burned, we don't want to send 0 cross-chain)
-        uint256 userInterestRate = IRebaseToken(address(i_token)).getUserInterestRate(lockOrBurnIn.originalSender);
+        uint256 userInterestRate = IRebaseToken(address(i_token))
+            .getUserInterestRate(lockOrBurnIn.originalSender);
         // //uint256 currentInterestRate = IRebaseToken(address(i_token)).getInterestRate();
         // The user (lockOrBurnIn.originalSender) send tokens to this pool, so we need to burn the tokens on the source chain
         IRebaseToken(address(i_token)).burn(address(this), lockOrBurnIn.amount);
@@ -32,17 +42,27 @@ contract RebaseTokenPool is TokenPool {
     }
 
     /// @notice Mints the tokens on the source chain
-    function releaseOrMint(Pool.ReleaseOrMintInV1 calldata releaseOrMintIn)
-        external
-        returns (Pool.ReleaseOrMintOutV1 memory)
-    {
+    function releaseOrMint(
+        Pool.ReleaseOrMintInV1 calldata releaseOrMintIn
+    ) external returns (Pool.ReleaseOrMintOutV1 memory) {
+        console.log("releaseOrMintIn.amount", releaseOrMintIn.amount);
         _validateReleaseOrMint(releaseOrMintIn);
         address receiver = releaseOrMintIn.receiver;
-        (uint256 userInterestRate) = abi.decode(releaseOrMintIn.sourcePoolData, (uint256));
+        uint256 userInterestRate = abi.decode(
+            releaseOrMintIn.sourcePoolData,
+            (uint256)
+        );
         // // Mint rebasing tokens to the receiver on the destination chain
         // // This will also mint any interest that has accrued since the last time the user's balance was updated.
-        IRebaseToken(address(i_token)).mint(receiver, releaseOrMintIn.amount, userInterestRate);
+        IRebaseToken(address(i_token)).mint(
+            receiver,
+            releaseOrMintIn.amount,
+            userInterestRate
+        );
 
-        return Pool.ReleaseOrMintOutV1({destinationAmount: releaseOrMintIn.amount});
+        return
+            Pool.ReleaseOrMintOutV1({
+                destinationAmount: releaseOrMintIn.amount
+            });
     }
 }
