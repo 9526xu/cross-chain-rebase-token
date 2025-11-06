@@ -16,7 +16,7 @@ import {RateLimiter} from "@chainlink/contracts-ccip/contracts/libraries/RateLim
 import {IRouterClient} from "@chainlink/contracts-ccip/contracts/interfaces/IRouterClient.sol";
 import {Client} from "@chainlink/contracts-ccip/contracts/libraries/Client.sol";
 
-contract RebaseTokenPoolTest is Test {
+contract CrossChainTest is Test {
     uint256 ethSepoliaFork;
     uint256 arbSepoliaFork;
     address owner;
